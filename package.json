@@ -1,0 +1,38 @@
+{
+  "name": "shop",
+  "version": "0.0.1",
+  "private": true,
+  "description": "空手购物API",
+  "scripts": {
+    "start": "node ./bin/www"
+  },
+  "author": "dbwen",
+  "dependencies": {
+    "body-parser": "^1.17.1",
+    "config-lite": "1.5.0",
+    "connect-flash": "0.1.1",
+    "connect-mongo": "1.3.2",
+    "ejs": "2.5.2",
+    "express": "4.14.0",
+    "express-formidable": "1.0.0",
+    "express-session": "1.14.2",
+    "express-winston": "2.0.0",
+    "jsonwebtoken": "^7.4.0",
+    "jwt-simple": "^0.5.1",
+    "marked": "0.3.6",
+    "mocha": "^3.1.2",
+    "moment": "2.15.2",
+    "mongolass": "2.4.1",
+    "mongoose": "^4.9.7",
+    "objectid-to-timestamp": "1.3.0",
+    "sha1": "1.1.1",
+    "supertest": "^2.0.1",
+    "winston": "2.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "^7.0.13",
+    "istanbul": "^0.4.5",
+    "mocha": "3.1.2",
+    "supertest": "2.0.1"
+  }
+}
