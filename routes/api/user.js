@@ -18,6 +18,7 @@ route.post('/register', function (req, res) {
     let username = req.body.username;
     let password = req.body.password;
 
+    let result = {};
     result.code = 200;
     result.msg = 'success';
 

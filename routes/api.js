@@ -14,8 +14,8 @@ router.use('/user',require('./api/user'));
 
 //用户登录 接口
  router.get('/login', function (req, res) {
-     res.render('index');
-     res.statusCode(200).end("the request is not correct");
+
+     res.end("the request is not correct");
  });
 
 router.post('/login', function (req, res) {
