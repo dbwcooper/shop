@@ -5,6 +5,8 @@ var bodyParser = require('body-parser');
 var winston = require('winston');
 var expressWinston = require('express-winston');
 
+//后台管理系统的中间件
+var flash = require('connect-flash');
 
 var route = require('./routes');
 
@@ -16,6 +18,7 @@ const config = require('./config/default');
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
+
 // 设置静态文件路径
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -24,6 +27,8 @@ app.locals = {
   title : "shop",
 };
 
+// 添加一个中间件 后端(商户的)前台界面使用
+app.use(flash());
 // express 框架将post 数据 更新到 req.body 里面
 
 // 使用表单提交的application/x-www-form-urlencoded类型
@@ -38,7 +43,7 @@ app.all('*', function (req, res, next) {
     // res.header("Access-Control-Allow-Methods", "PUT,POST,GET,DELETE,OPTIONS");
     // res.header("X-Powered-By", ' 3.2.1');
     // res.header("Content-Type", "application/json;charset=utf-8");
-    res.writeHead(200,{'Content-Type':'application/json;charset=utf-8'});
+    // res.writeHead(200,{'Content-Type':'application/json;charset=utf-8'});
 
     next();
 });

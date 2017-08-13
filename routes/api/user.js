@@ -3,17 +3,19 @@
  */
 
 var express = require('express');
-var route = express.Router();
+var router = express.Router();
 var userModel = require('../../models/user');
+
+var User = require('../../lib/mongo').User;
+
 var sha1 = require('sha1');
-var jwt = require('../../middlewares/jwt');
+var jwt = require('../../middlewares/jwt').jwtVerify;
 
 
 /**
  * 用户注册
  */
-route.post('/register', function (req, res) {
-
+router.post('/register', function (req, res) {
 
     let username = req.body.username;
     let password = req.body.password;
@@ -22,34 +24,33 @@ route.post('/register', function (req, res) {
     result.code = 200;
     result.msg = 'success';
 
-    if (!(username.length >= 1 && username.length <= 10)) {
+    if (!(username.length >= 1 && username.length <= 10) || password.length < 6) {
         result.code = 400;
-        result.msg = "用户名输入有误";
-    } else if (password.length < 6) {
-        result.code = 400;
-        result.msg = "密码输入有误";
+        result.msg = "用户名或密码有误";
+        res.end(JSON.stringify(result));
     } else {
 
-        // repassword 申明会提前 所以 password 与 repassword 名字不能一样
-        let repassword = sha1(password);
         let user = {
             username: username,
-            password: repassword,
+            password: sha1(password),
         };
-
-        userModel.createUser(user)
-            .then(function (user_model) {
-                console.log(user_model.ops[0]);
-                console.log("成功");
-
+        User.create(user, function (err) {
+            if (err && err.toString().match('E11000 duplicate key')) {
+                result.code = 400;
+                result.msg = "用户名已存在";
+                res.end(JSON.stringify(result))
+            }
+        })
+            .then(function (model) {
+                // 执行成功  resolved
                 res.end(JSON.stringify(result));
             })
-            .catch(function (err) {
-                if (err.message.match('E11000 duplicate key')) {
-                    result.msg = "用户已存在";
-                    result.code = 401;
-                    res.end(JSON.stringify(result));
-                }
+            .then(function (err) {
+                // 执行失败 rejected
+                console.log(err);
+                result.code = 400;
+                result.msg = "创建用户失败";
+                res.end(JSON.stringify(result));
             });
 
     }
@@ -61,12 +62,13 @@ route.post('/register', function (req, res) {
  *  服务端接收用户的 用户名和密码 与数据库进行比对，通过验证之后 颁发token(secret + username)
  *  以后该用户的每一次请求接口必须带上该用户的token,(设计两个类 一个颁发token类,一个token验证类)
  */
-route.post('/login', function (req, res) {
+router.post('/login', function (req, res) {
     let username = req.body.username;
     let password = req.body.password;
     let result = {};
     result.code = 200;
     result.msg = 'success';
+
 
     userModel.getUserByUserName(username)
         .then(function (user) {
@@ -80,8 +82,7 @@ route.post('/login', function (req, res) {
                 result.code = 400;
                 result.msg = '用户名或密码错误';
                 res.end(JSON.stringify(result));
-            }
-            else {
+            } else {
                 //制作 token  每一次token 都会变化
                 let token = jwt.jwtSign(user.username);
 
@@ -97,4 +98,53 @@ route.post('/login', function (req, res) {
         });
 });
 
-module.exports = route;
+/**
+ * 用户修改密码 和 其他信息 2017/6/14
+ */
+router.post('/:id',jwt,function (req,res) {
+    let user = req.body;
+
+    let result = {};
+    result.code = 200;
+    result.msg = 'success';
+
+    //判断 用户是否修改密码
+
+    if (!(user.username.length >= 1 && user.username.length <= 10) || user.password.length < 6) {
+        result.code = 400;
+        result.msg = "用户名或密码有误";
+        res.end(JSON.stringify(result));
+    } else {
+
+        User.getUserByUserName(user.username)
+            .then()
+            .then()
+            .catch()
+        let user = {
+            username: username,
+            password: sha1(password),
+        };
+        User.create(user, function (err) {
+            if (err && err.toString().match('E11000 duplicate key')) {
+                result.code = 400;
+                result.msg = "用户名已存在";
+                res.end(JSON.stringify(result))
+            }
+        })
+            .then(function (model) {
+                // 执行成功  resolved
+                res.end(JSON.stringify(result));
+            })
+            .then(function (err) {
+                // 执行失败 rejected
+                console.log(err);
+                result.code = 400;
+                result.msg = "创建用户失败";
+                res.end(JSON.stringify(result));
+            });
+
+    }
+});
+
+
+module.exports = router;

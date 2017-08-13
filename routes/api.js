@@ -6,24 +6,47 @@ var express = require('express');
 var router = express.Router();
 
 /**
- * 用户注册
+ * 用户接口
  */
 router.use('/user',require('./api/user'));
 
+/**
+ * 商家接口
+ */
+router.use('/shipper',require('./api/shipper'));
+
+/**
+ * 商品接口
+ */
+router.use('/goods',require('./api/goods'));
+
+/**
+ * 二维码分类商品接口
+ */
+
+router.use('/barcode',require('./api/goods'));
+
+/**
+ * 订单接口
+ */
+router.use('/orders',require('./api/order'));
+
+/**
+ * 地址接口
+ */
+
+router.use('/address',require('./api/address'));
 
 
-//用户登录 接口
- router.get('/login', function (req, res) {
 
-     res.end("the request is not correct");
- });
 
-router.post('/login', function (req, res) {
-    console.log("用户登录接口请求方式: " + req.method);
+//路径访问出错
+router.use(function (req,res) {
+    console.log("123"+res.headersSent);
 
-    console.log("res.session:" + res.session);
-    res.end('success post');
-
+    if(!res.headersSent){
+        res.status(404).end();
+    }
 });
 
 module.exports = router;

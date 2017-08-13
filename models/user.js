@@ -11,29 +11,20 @@ module.exports = {
 
     // 注册一个用户
     createUser: function createUser(user) {
-        //mongoose
-        // User.create(user, function (err) {
-        //     if (err && err.message.match('E11000 duplicate key')) {
-        //         //登录名被占用
-        //         console.log('登录名被占用');
-        //         msg = "登录名被占用";
-        //         return msg;
-        //     } else if (err) {
-        //         console.log('插入数据库失败');
-        //         msg = "插入数据库失败";
-        //         return msg;
-        //     }
-        //
-        // });
+        return User.create(user,function (err) {
+            if(err && err.toString().match('E11000 duplicate key')){
+                console.log('用户名已存在');
 
-        //mongolass
-        return User.create(user).exec();
+                return 400;
+            }else{
+                console.log("insert user success");
+            }
+        });
     },
 
     //通过 用户名返回用户
     getUserByUserName:function getUserByName(username) {
         return User
-            .findOne({username:username})
-            .exec();
+            .findOne({username:username});
     }
 };
