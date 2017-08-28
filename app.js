@@ -38,13 +38,12 @@ app.use(bodyParser.json());
 
 //设置 响应数据格式为json
 app.all('*', function (req, res, next) {
-    // res.header("Access-Control-Allow-Origin", "*");
-    // res.header("Access-Control-Allow-Headers", "X-Requested-With, Content-Type");
-    // res.header("Access-Control-Allow-Methods", "PUT,POST,GET,DELETE,OPTIONS");
-    // res.header("X-Powered-By", ' 3.2.1');
-    // res.header("Content-Type", "application/json;charset=utf-8");
-    // res.writeHead(200,{'Content-Type':'application/json;charset=utf-8'});
-
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "X-Requested-With, Content-Type");
+    res.header("Access-Control-Allow-Methods", "PUT,POST,GET,DELETE,OPTIONS");
+    res.header("X-Powered-By", ' 3.2.1');
+    res.header("Content-Type", "application/json;charset=utf-8");
+    res.writeHead(200,{'Content-Type':'application/json;charset=utf-8'});
     next();
 });
 // 正常请求的日志
