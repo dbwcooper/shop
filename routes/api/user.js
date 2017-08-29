@@ -23,17 +23,15 @@ router.post('/register', function (req, res) {
 
  
     let result = {};
-    result.code = 200;
-    result.msg = 'success';
-
+   
     if (username && password){
         let user = {
             username: username,
-            password: sha1(password),
+            password: sha1(password)
         };
         User.create(user, function (err) {
                 if (err && err.toString().match('E11000 duplicate key')) {
-                    result.code = 400;
+                    result.code = 402;
                     result.msg = "用户名已存在";
                     res.end(JSON.stringify(result));
                 }
@@ -48,16 +46,15 @@ router.post('/register', function (req, res) {
             })
             .then(function (err) {
                 // 执行失败 rejected
-
-                result.code = 400;
+                result.code = 406;
                 result.msg = "创建用户失败";
                 res.end(JSON.stringify(result));
             });
 
     }else{
 
-        result.code = 400;
-        result.msg = '用户格式错误';
+        result.code = 401;
+        result.msg = '参数错误';
         res.end(JSON.stringify(result));
     }
 });
@@ -72,20 +69,23 @@ router.post('/login', function (req, res) {
     let username = req.body.username;
     let password = req.body.password;
     let result = {};
-    result.code = 200;
-    result.msg = 'success';
-
-
+   
+    if (!username || !password){
+        result.code = 401;
+        result.msg = '参数错误';
+        res.end(JSON.stringify(result));
+    }
+   
     userModel.getUserByUserName(username)
         .then(function (user) {
             if (!user) {
-                result.code = 400;
-                result.msg = '用户:' + username + '不存在';
+                result.code = 402;
+                result.msg = '用户不存在';
                 res.end(JSON.stringify(result));
             }
             //检查密码是否一致
             else if (sha1(password) !== user.password) {
-                result.code = 400;
+                result.code = 403;
                 result.msg = '用户名或密码错误';
                 res.end(JSON.stringify(result));
             } else {
@@ -98,8 +98,8 @@ router.post('/login', function (req, res) {
             }
         })
         .catch(function (err) {
-            result.code = 400;
-            result.msg = '登录失败' + err;
+            result.code = 500;
+            result.msg = '服务端错误' + err;
             res.end(JSON.stringify(result));
         });
 });
@@ -121,15 +121,6 @@ router.post('/:id', jwt.jwtVerify, function (req, res) {
         result.msg = "用户名或密码有误";
         res.end(JSON.stringify(result));
     } else {
-
-        User.getUserByUserName(user.username)
-            .then()
-            .then()
-            .catch()
-        let user = {
-            username: username,
-            password: sha1(password),
-        };
         User.create(user, function (err) {
                 if (err && err.toString().match('E11000 duplicate key')) {
                     result.code = 400;

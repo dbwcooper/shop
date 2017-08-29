@@ -2,4 +2,9 @@
 node_modules/*
 bin
 /node_modules
+/logs/*
+github_rsa
+github_rsa.pub
+.idea/*
+
 
